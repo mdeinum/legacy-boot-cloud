@@ -29,7 +29,7 @@ public interface OrderRepository {
 
     /**
      * Find the orders for the given {@link Account}.
-     * @param customer the account
+     * @param account the account
      * @return list of orders for the account, never <code>null</code>
      */
     List<Order> findByAccount(Account account);
