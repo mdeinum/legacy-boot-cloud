@@ -27,9 +27,9 @@ public interface BookstoreService {
     List<Book> findRandomBooks();
 
     /**
-     * Find the {@link Order}s for a given {@link Customer}.
+     * Find the {@link Order}s for a given {@link Account}.
      * 
-     * @param customer the customer
+     * @param account the customer
      * @return the list of orders (never <code>null</code>).
      */
     List<Order> findOrdersForAccount(Account account);
@@ -51,10 +51,10 @@ public interface BookstoreService {
     List<Book> findBooks(BookSearchCriteria bookSearchCriteria);
 
     /**
-     * Create an actual {@link Order} for the given {@link Customer} based on the content of their {@link Cart}.
+     * Create an actual {@link Order} for the given {@link Account} based on the content of their {@link Cart}.
      * 
      * @param cart the cart
-     * @param customer the customer
+     * @param account the customer
      * @return an {@link Order}
      */
     Order createOrder(Cart cart, Account account);
