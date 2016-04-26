@@ -15,6 +15,7 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
 import org.springframework.web.servlet.view.tiles2.TilesConfigurer;
 import org.springframework.web.servlet.view.tiles2.TilesViewResolver;
 import org.springframework.web.servlet.view.xml.MarshallingView;
@@ -77,8 +78,8 @@ public class ViewConfiguration {
     }
 
     @Bean
-    public MappingJackson2JsonView jsonOrderView() {
-        MappingJackson2JsonView jsonView = new MappingJackson2JsonView();
+    public MappingJacksonJsonView jsonOrderView() {
+        MappingJacksonJsonView jsonView = new MappingJacksonJsonView();
         jsonView.setModelKey("order");
         return jsonView;
     }
