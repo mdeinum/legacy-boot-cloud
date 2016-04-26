@@ -1,23 +1,16 @@
 package com.apress.prospringmvc.bookstore.web;
 
-import java.util.EnumSet;
-
-import javax.servlet.DispatcherType;
-import javax.servlet.FilterRegistration;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
-
+import com.apress.prospringmvc.bookstore.web.config.WebMvcContextConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import com.apress.prospringmvc.bookstore.config.InfrastructureContextConfiguration;
-import com.apress.prospringmvc.bookstore.config.TestDataContextConfiguration;
-import com.apress.prospringmvc.bookstore.web.config.WebMvcContextConfiguration;
+import javax.servlet.*;
+import java.util.EnumSet;
 
 /**
  * {@link WebApplicationInitializer} that will be called by Spring's {@code SpringServletContainerInitializer} as part
@@ -64,8 +57,8 @@ public class BookstoreWebApplicationInitializer implements WebApplicationInitial
     }
 
     private void registerListener(ServletContext servletContext) {
-        AnnotationConfigWebApplicationContext rootContext = createContext(InfrastructureContextConfiguration.class,
-                TestDataContextConfiguration.class);
+        XmlWebApplicationContext rootContext = new XmlWebApplicationContext();
+        rootContext.setConfigLocation("classpath:/META-INF/spring/application-context.xml");
         servletContext.addListener(new ContextLoaderListener(rootContext));
     }
 
