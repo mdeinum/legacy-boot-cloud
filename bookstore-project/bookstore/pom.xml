@@ -351,10 +351,7 @@
 
                 <configuration>
 
-                    <port>8080</port>
-                    <httpsPort>8443</httpsPort>
-                    <keystoreFile>${project.build.directory}/tomcat-ssl.keystore</keystoreFile>
-                    <keystorePass>tomcat-learn</keystorePass>
+                    <port>8090</port>
                     <path>/</path>
                 </configuration>
             </plugin>
