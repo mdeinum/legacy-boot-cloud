@@ -2,16 +2,15 @@ package com.apress.prospringmvc.bookstore.web.controller;
 
 import javax.servlet.http.HttpSession;
 
+import com.apress.prospringmvc.bookstore.domain.Account;
+import com.apress.prospringmvc.bookstore.service.AccountService;
+import com.apress.prospringmvc.bookstore.service.AuthenticationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import com.apress.prospringmvc.bookstore.domain.Account;
-import com.apress.prospringmvc.bookstore.service.AccountService;
-import com.apress.prospringmvc.bookstore.service.AuthenticationException;
 
 /**
  * Controller to handle login. 

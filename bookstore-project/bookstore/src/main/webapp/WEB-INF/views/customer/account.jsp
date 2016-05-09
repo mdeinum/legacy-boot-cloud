@@ -32,15 +32,15 @@
 <table>    
     <tr><th>#</th><th>Date</th><th>Total</th></tr>
     <c:forEach items="${orders}" var="order">
-        <c:url value="/order.pdf" var="pdfUrl">
-            <c:param name="orderId" value="${order.id}"/>
-        </c:url>
-        <c:url value="/order.xls" var="xlsUrl">
-            <c:param name="orderId" value="${order.id}"/>
-        </c:url>
-        <c:url value="/order.htm" var="htmUrl">
-            <c:param name="orderId" value="${order.id}"/>
-        </c:url>
+        <spring:url value="/order.pdf" var="pdfUrl">
+            <spring:param name="orderId" value="${order.id}"/>
+        </spring:url>
+        <spring:url value="/order.xls" var="xlsUrl">
+            <spring:param name="orderId" value="${order.id}"/>
+        </spring:url>
+        <spring:url value="/order.htm" var="htmUrl">
+            <spring:param name="orderId" value="${order.id}"/>
+        </spring:url>
         <tr><td>${order.id}</td><td>${order.orderDate}</td><td>${order.totalOrderPrice} $</td><td><a href="${htmUrl}" target="_blank">HTML</a>|<a href="${pdfUrl}" target="_blank">PDF</a>|<a href="${xlsUrl}" target="_blank">XLS</a></td></tr>
     </c:forEach>
 </table>

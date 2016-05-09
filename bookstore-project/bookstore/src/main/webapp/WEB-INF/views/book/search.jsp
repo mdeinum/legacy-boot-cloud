@@ -30,7 +30,7 @@
                 <td><a href="<c:url value="/book/detail/${book.id}"/>">${book.title}</a></td>
                 <td>${book.description}</td>
                 <td>${book.price}</td>
-                <td><a href="<c:url value="/cart/add/${book.id}"/>"><spring:message code="book.addtocart"/></a></td>
+                <td><a href="<spring:url value="/cart/add/${book.id}"/>"><spring:message code="book.addtocart"/></a></td>
             </tr>
         </c:forEach>
     </table>

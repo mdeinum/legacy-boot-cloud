@@ -10,8 +10,8 @@
         <tiles:getAsString name="title" />
     </c:set>
     <title>Bookstore | <spring:message code="${titleKey}" text="Your Home in Books"/></title>
-    <link rel="stylesheet" type="text/css" href="<c:url value="/resources/css/style.css"/>" >
-    <script src="<c:url value="/resources/jquery/jquery-1.7.1.min.js"/>"></script>
+    <link rel="stylesheet" type="text/css" href="<spring:url value="/resources/css/style.css"/>" >
+    <script src="<spring:url value="/resources/jquery/jquery-1.7.1.min.js"/>"></script>
 
 </head>
 <body>
@@ -28,15 +28,15 @@
              <div class="right_box">
              
                 <div class="title">
-                    <span class="title_icon"><img src="<c:url value="/resources/images/bullet4.gif"/>" alt="" title="" /></span>
+                    <span class="title_icon"><img src="<spring:url value="/resources/images/bullet4.gif"/>" alt="" title="" /></span>
                     <spring:message code="main.title.randombooks"/>
                 </div> 
                     <c:forEach items="${randomBooks}" var="book">
                         <div class="new_prod_box">
-                            <c:url value="/book/detail/${book.id}" var="bookUrl" />
+                            <spring:url value="/book/detail/${book.id}" var="bookUrl" />
                             <a href="${bookUrl}">${book.title}</a>
                             <div class="new_prod_img">
-                            <c:url value="/resources/images/books/${book.isbn}/book_front_cover.png" var="bookImage"/>
+                            <spring:url value="/resources/images/books/${book.isbn}/book_front_cover.png" var="bookImage"/>
                             <a href="${bookUrl}"><img src="${bookImage}" alt="${book.title}" title="${book.title}" class="thumb" border="0" width="100px"/></a>
                             </div>           
                         </div>

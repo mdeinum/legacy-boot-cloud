@@ -24,7 +24,7 @@ public class SecurityHandlerInterceptor extends HandlerInterceptorAdapter {
         if (account == null) {
 
             //Retrieve and store the original URL.
-            String url = request.getRequestURL().toString();
+            String url = request.getContextPath();
             WebUtils.setSessionAttribute(request, LoginController.REQUESTED_URL, url);
             throw new AuthenticationException("Authentication required.", "authentication.required");
         }
