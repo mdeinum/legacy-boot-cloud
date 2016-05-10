@@ -14,7 +14,6 @@ Use the following `application.yml`
     management:
       port: 8075
 
-
     endpoints:
       restart:
         enabled: true
@@ -106,7 +105,8 @@ Add `@EnableConfigServer` to the application class.
 Put the following in 'application.properties'
 
     server.port=8888
-    spring.cloud.config.server.git.uri=https://github.com/mdeinum/legacy-boot-cloud-config.git
+    spring.cloud.config.server.git.uri=file://${user.home}/Repositories/legacy-boot-cloud-config
+    #spring.cloud.config.server.git.uri=https://github.com/mdeinum/legacy-boot-cloud-config.git
 
 Reconfigure the bookstore-proxy to use the config server to obtain the configuration.
 Add a `bootstrap.yml` file with the following content.
@@ -181,3 +181,34 @@ Modify the `BookstoreWebApplicationInitializer`.
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
+Now start the application and lets see what is going to happen.
+
+## Use spring-boot-starters to cleanup the pom
+1. Add `spring-boot-starter-web`
+2. Add `spring-boot-starter-tomcat` with `<scope>provided</scope>`
+3. Add `spring-boot-starter-validation`
+    We might need to set `<scope>provided</scope>` for the following dependency
+
+    		<dependency>
+    			<groupId>org.apache.tomcat.embed</groupId>
+    			<artifactId>tomcat-embed-el</artifactId>
+    		</dependency>
+
+3. Add `spring-boot-starter-data-jpa`
+4. Cleanup the remainder of the dependencies section
+5. Remove the `dependencyManagement` section of the pom (or at least clean it up)
+6. Restart the application
+
+## Use Spring Boot to bootstrap the application
+
+1. Create a `BookstoreApplication` in the root package let it extend `SpringBootServletInitializer` and add a main method.
+2. Annotate with `@SpringBootApplication` and remove our current bootstrap code. Add `@ImportResource` to load the current XML based configuration.
+3. Register the `OpenEntityManagerInViewFilter` using an `@Bean` method and `FilterRegistrationBean`.
+4. Remove the `BookstoreWebApplicationInitializer`.
+5. Add `server.port=8090` to `application.properties`
+6. Add the `spring-boot-maven-plugin` and remove the war and compile plugin (those are provided by the parent)
+7. Restart the application using the main method.
+
+## Add Spring Boot features
+1. Add `spring-boot-starter-actuator`
+2. Restart application

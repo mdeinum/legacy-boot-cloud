@@ -186,6 +186,28 @@ public class InitialDataSetup {
                         }
                     }.build();
 
+                    final Book proSpringMVC = new BookBuilder() {{
+                        title("Pro Spring MVC: with Web Flow");
+                        isbn("9781430241553");
+                        description("Pro Spring MVC is an in-depth guide to Spring MVC, a modern web framework build on top of the Spring Framework. This book covers the nuts and bolts of Spring MVC and how to utilize Spring MVC to its fullest.");
+                        author("Marten Deinum");
+                        year(2012);
+                        price("39.98");
+                        category(InitialDataSetup.this.category);
+
+                    }}.build();
+
+                    final Book springRecipes = new BookBuilder() {{
+                        title("Spring Recipes");
+                        isbn("9781430259084");
+                        description("Spring Recipes: A Problem-Solution Approach, Third Edition continues upon the best-selling success of the previous editions and focuses on the latest Spring Framework features for building enterprise Java applications.");
+                        author("Marten Deinum");
+                        year(2014);
+                        price("34.98");
+                        category(InitialDataSetup.this.category);
+
+                    }}.build();
+
                     // For the first three books we create a separate order for each book.
                     // For the final two books we create a single order but add two books to them
                     orders.add(new OrderBuilder() {
