@@ -168,7 +168,8 @@ Modify the `BookstoreWebApplicationInitializer`.
         servletContext.setInitParameter(ContextLoader.CONFIG_LOCATION_PARAM, CONFIG_LOCATION);
 
 4. Add `spring.application.name` to `bookstore.properties` and rename the file to `application.properties`
-5. Start the application
+5. Optionally remove the `location` attribute from the `<context:property-placeholder />`
+6. Start the application
 
 
 # Add Spring Boot as parent
