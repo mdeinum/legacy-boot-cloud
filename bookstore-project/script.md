@@ -102,7 +102,7 @@ Using http://start.spring.io create a config-service (config-server and actuator
 
 Add `@EnableConfigServer` to the application class.
 
-Put the following in 'application.properties'
+Put the following in `application.properties`
 
     server.port=8888
     spring.cloud.config.server.git.uri=file://${user.home}/Repositories/legacy-boot-cloud-config
@@ -177,7 +177,7 @@ Modify the `BookstoreWebApplicationInitializer`.
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.3.4.RELEASE</version>
+		<version>1.3.5.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
