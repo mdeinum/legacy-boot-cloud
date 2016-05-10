@@ -62,6 +62,6 @@ public class RegistrationController {
             return "customer/register";
         }
         this.accountService.save(account);
-        return "redirect:/customer/account/" + account.getId();
+        return "redirect:/login";
     }
 }
