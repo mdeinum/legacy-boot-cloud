@@ -15,11 +15,10 @@
 	</appender>
 
     <logger name="org.springframework" level="INFO" />
-    <logger name="org.springframework.web" level="TRACE" />
-    
+	<logger name="org.springframework.boot.context" level="DEBUG" />
+
 	<logger name="com.apress" level="DEBUG" />
     <logger name="com.apress.prospringmvc.context" level="WARN" />
-    
 
 	<root level="WARN">
 		<appender-ref ref="STDOUT" />
