@@ -117,20 +117,59 @@ Add a `bootstrap.yml` file with the following content.
 
 Before restarting the proxy uncomment the config-client and remove or empty application.[yml|properties].
 
-# Obtain Configuration from Config Server without Config Client
+# Obtain Configuration from Config Server without Spring Boot
 
-Using a `RestTemplate` call the config-service and obtain the configuration for the bookstore application.
-(http://localhost:8888/bookstore.properties).
+The "magic" is actually just configuration. Use the Spring Cloud Client configuration to manually obtain the
+configuration.
 
-    public class ConfigServerInitializer implements ApplicationContextInitializer {
+First add dependency management for Spring Cloud by adding the bom
 
-        public void initialize(ConfigurableApplicationContext ctx) {
-            RestTemplate rest = new RestTemplate();
-            Map properties = rest.getForObject("http://localhost:8888/bookstore.properties", Map.class);
-            ctx.getEnvironment().addPropertySource("config-server", new MapPropertySource(properties));
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Brixton.RC2</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+Next add the `spring-cloud-config-client` dependency.
+
+    <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-config-client</artifactId>
+    </dependency>
+
+Modify the `BookstoreWebApplicationInitializer`.
+
+1. Add `@Order(Ordered.HIGHEST_PRECEDENCE)` to prevent the Jersey interfering with our `ContextLoaderListener`
+2. Add an `ApplicationContextInitializer` to mimic theSpring Cloud Client bootstrapping
+
+        public static class BootstrapConfigInitializer implements ApplicationContextInitializer {
+
+            @Override
+            public void initialize(ConfigurableApplicationContext applicationContext) {
+                ConfigurableEnvironment environment = applicationContext.getEnvironment();
+                ConfigClientProperties configClientProperties = new ConfigClientProperties(environment);
+                ConfigServicePropertySourceLocator locator = new ConfigServicePropertySourceLocator(configClientProperties);
+                PropertySource config = locator.locate(environment);
+                environment.getPropertySources().addLast(config);
+            }
         }
 
-    }
+3. Add init parameters for the configuration to load, the initializer to use and which configuration file to load).
+
+        String[] initializers = new String[] {ConfigFileApplicationContextInitializer.class.getName(), BootstrapConfigInitializer.class.getName()};
+
+        servletContext.setInitParameter(ContextLoader.GLOBAL_INITIALIZER_CLASSES_PARAM, StringUtils.arrayToCommaDelimitedString(initializers));
+        servletContext.setInitParameter(ContextLoader.CONFIG_LOCATION_PARAM, CONFIG_LOCATION);
+
+4. Add `spring.application.name` to `bookstore.properties` and rename the file to `application.properties`
+5. Start the application
+
 
 # Add Spring Boot as parent
 
@@ -140,3 +179,4 @@ Using a `RestTemplate` call the config-service and obtain the configuration for 
 		<version>1.3.4.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+
