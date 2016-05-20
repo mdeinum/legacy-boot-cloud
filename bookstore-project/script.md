@@ -141,12 +141,13 @@ Next add the `spring-cloud-config-client` dependency.
     <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-config-client</artifactId>
+        <version>1.1.0.RELEASE</version>
     </dependency>
 
 Modify the `BookstoreWebApplicationInitializer`.
 
-1. Add `@Order(Ordered.HIGHEST_PRECEDENCE)` to prevent the Jersey interfering with our `ContextLoaderListener`
-2. Add an `ApplicationContextInitializer` to mimic theSpring Cloud Client bootstrapping
+1. Add interface `PriorityOrdered` to prevent the Jersey interfering with our `ContextLoaderListener`
+2. Add an `ApplicationContextInitializer` to mimic the Spring Cloud Client bootstrapping
 
         public static class BootstrapConfigInitializer implements ApplicationContextInitializer {
 
@@ -162,12 +163,10 @@ Modify the `BookstoreWebApplicationInitializer`.
 
 3. Add init parameters for the configuration to load, the initializer to use and which configuration file to load).
 
-        String[] initializers = new String[] {ConfigFileApplicationContextInitializer.class.getName(), BootstrapConfigInitializer.class.getName()};
-
-        servletContext.setInitParameter(ContextLoader.GLOBAL_INITIALIZER_CLASSES_PARAM, StringUtils.arrayToCommaDelimitedString(initializers));
+        servletContext.setInitParameter(ContextLoader.GLOBAL_INITIALIZER_CLASSES_PARAM, BootstrapConfigInitializer.class.getName());
         servletContext.setInitParameter(ContextLoader.CONFIG_LOCATION_PARAM, CONFIG_LOCATION);
+        servletContext.setInitParameter("spring.application.name", "bookstore");
 
-4. Add `spring.application.name` to `bookstore.properties` and rename the file to `application.properties`
 5. Optionally remove the `location` attribute from the `<context:property-placeholder />`
 6. Start the application
 
@@ -183,21 +182,95 @@ Modify the `BookstoreWebApplicationInitializer`.
 
 Now start the application and lets see what is going to happen.
 
+
+
+## Let Spring Boot Manage the dependency versions (part 1)
+1. Clean up the `<properties>` section, leave the Spring Framework version
+2. Restart the application and check what happens
+
 ## Use spring-boot-starters to cleanup the pom
 1. Add `spring-boot-starter-web`
-2. Add `spring-boot-starter-tomcat` with `<scope>provided</scope>`
+2. Add `spring-boot-starter-data-jpa`
 3. Add `spring-boot-starter-validation`
-    We might need to set `<scope>provided</scope>` for the following dependency
+4. Add `spring-boot-starter-tomcat` with `<scope>provided</scope>`
+5. Add
 
-    		<dependency>
-    			<groupId>org.apache.tomcat.embed</groupId>
-    			<artifactId>tomcat-embed-el</artifactId>
-    		</dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-3. Add `spring-boot-starter-data-jpa`
-4. Cleanup the remainder of the dependencies section
-5. Remove the `dependencyManagement` section of the pom (or at least clean it up)
-6. Restart the application
+6. Cleanup the remainder of the dependencies section
+7. Remove the `dependencyManagement` section of the pom (or at least clean it up)
+8. Restart the application
+
+## Upgrade Spring Version
+1. Remove the `spring.version` from the `<properties>` section in the pom
+2. Restart the application
+3. Rollback the change
+4. Create a test for the `OrderController`
+
+        @RunWith(SpringJUnit4ClassRunner.class)
+        @ContextConfiguration
+        @WebAppConfiguration
+        public class OrderControllerTest {
+
+            private static final String EXPECTED_JSON = "{\"order\":{\"id\":1,\"shippingAddress\":null,\"billingAddress\":null,\"account\":{\"id\":1,\"firstName\":\"John\",\"lastName\":\"Doe\",\"dateOfBirth\":null,\"address\":{\"street\":\"Nieuwstraat\",\"houseNumber\":\"1\",\"boxNumber\":\"A\",\"city\":\"Brussels\",\"postalCode\":\"1000\",\"country\":\"BE\"},\"emailAddress\":\"foo@test.com\",\"username\":\"jd\",\"password\":\"5238377ba2eac049901b54004ee9e03db62c0ab0b48133a4a162ab3aedfc809f\",\"roles\":[{\"id\":1,\"role\":\"ROLE_CUSTOMER\",\"permissions\":[{\"id\":1,\"permission\":\"PERM_CREATE_ORDER\"}]}]},\"billingSameAsShipping\":true,\"orderDate\":1463731858353,\"deliveryDate\":1463731858353,\"totalOrderPrice\":31.00,\"orderDetails\":[{\"id\":1,\"book\":{\"id\":1,\"title\":\"Effective Java\",\"description\":\"Brings together seventy-eight indispensable programmer's rules of thumb.\",\"price\":31.20,\"year\":2008,\"author\":\"Joshua Bloch\",\"category\":{\"id\":1,\"name\":\"IT\"},\"isbn\":\"9780321356680\"},\"quantity\":1,\"price\":31}],\"totalNumberOfbooks\":1}}";
+
+            @Autowired
+            private WebApplicationContext context;
+
+            @Autowired
+            private BookstoreService bookstoreService;
+
+            @Autowired
+            private AccountRepository accountRepository;
+
+            private MockMvc mockMvc;
+
+            @Before
+            public void setup() {
+                mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+
+            }
+
+            @Test
+            @Transactional
+            @Ignore
+            public void shouldReturnAJSonOrder() throws Exception {
+
+                Account account = accountRepository.findByUsername("jd");
+
+                mockMvc.perform(
+                        get("/order/{orderId}", 1L)
+                            .accept(MediaType.APPLICATION_JSON)
+                            .sessionAttr(LoginController.ACCOUNT_ATTRIBUTE, account))
+                        .andExpect(MockMvcResultMatchers.content().string(EXPECTED_JSON))
+                        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                        .andDo(MockMvcResultHandlers.print());
+
+            }
+
+
+            @Configuration
+            @Import({WebMvcContextConfiguration.class, ViewConfiguration.class})
+            @ImportResource("classpath:/META-INF/spring/application-context.xml")
+            public static class OrderControllerTestConfiguration {
+            }
+        }
+5. Run the test make sure it is green.
+6. Modify in the `ViewConfiguration` the bean `MappingJacksonJsonView` to `MapingJackson2JsonView`
+7. Remove Jackson1 from the pom and replace with Jackson2
+
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+8. Rerun the test make sure it is green again.
+9. Start application check if it works
+10. Goto 1. :)
 
 ## Use Spring Boot to bootstrap the application
 
@@ -205,9 +278,9 @@ Now start the application and lets see what is going to happen.
 2. Annotate with `@SpringBootApplication` and remove our current bootstrap code. Add `@ImportResource` to load the current XML based configuration.
 3. Register the `OpenEntityManagerInViewFilter` using an `@Bean` method and `FilterRegistrationBean`.
 4. Remove the `BookstoreWebApplicationInitializer`.
-5. Add `server.port=8090` to `application.properties`
-6. Add the `spring-boot-maven-plugin` and remove the war and compile plugin (those are provided by the parent)
-7. Restart the application using the main method.
+5. Add the `spring-boot-maven-plugin` and remove the war and compile plugin (those are provided by the parent)
+6. Restart the application using the main method.
+
 
 ## Add Spring Boot features
 1. Add `spring-boot-starter-actuator`
