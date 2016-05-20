@@ -1,5 +1,6 @@
 package com.apress.prospringmvc.bookstore.domain.support;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,8 +52,12 @@ public class InitialDataSetup {
 
     public void initialize() {
         EntityBuilderManager.setEntityManager(this.entityManager);
+        final long currentTime = 1463731858353L;
+        final Date deliveryDate = new Date(currentTime);
 
         this.transactionTemplate.execute(new TransactionCallback<Void>() {
+
+
             @Override
             public Void doInTransaction(TransactionStatus status) {
                 if (dataIsAlreadyPresent()) {
@@ -213,8 +218,8 @@ public class InitialDataSetup {
                     orders.add(new OrderBuilder() {
                         {
                             addBook(effectiveJava, 1);
-                            deliveryDate(new Date());
-                            orderDate(new Date());
+                            deliveryDate(deliveryDate);
+                            orderDate(deliveryDate);
                             account(InitialDataSetup.this.johnDoe);
                         }
                     }.build());
@@ -222,8 +227,8 @@ public class InitialDataSetup {
                     orders.add(new OrderBuilder() {
                         {
                             addBook(refactoring, 1);
-                            deliveryDate(new Date());
-                            orderDate(new Date());
+                            deliveryDate(deliveryDate);
+                            orderDate(deliveryDate);
                             account(InitialDataSetup.this.johnDoe);
                         }
                     }.build());
@@ -231,8 +236,8 @@ public class InitialDataSetup {
                     orders.add(new OrderBuilder() {
                         {
                             addBook(cleanCode, 1);
-                            deliveryDate(new Date());
-                            orderDate(new Date());
+                            deliveryDate(deliveryDate);
+                            orderDate(deliveryDate);
                             account(InitialDataSetup.this.johnDoe);
                         }
                     }.build());
@@ -241,8 +246,8 @@ public class InitialDataSetup {
                         {
                             addBook(agileSoftware, 1);
                             addBook(practicalApiDesign, 1);
-                            deliveryDate(new Date());
-                            orderDate(new Date());
+                            deliveryDate(deliveryDate);
+                            orderDate(deliveryDate);
                             account(InitialDataSetup.this.johnDoe);
                         }
                     }.build());
