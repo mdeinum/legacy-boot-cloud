@@ -1,5 +1,12 @@
 package com.apress.prospringmvc.bookstore.web;
 
+import java.util.EnumSet;
+import javax.servlet.DispatcherType;
+import javax.servlet.FilterRegistration;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
+
 import com.apress.prospringmvc.bookstore.web.config.WebMvcContextConfiguration;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter;
@@ -8,9 +15,6 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
-
-import javax.servlet.*;
-import java.util.EnumSet;
 
 /**
  * {@link WebApplicationInitializer} that will be called by Spring's {@code SpringServletContainerInitializer} as part
@@ -39,6 +43,7 @@ import java.util.EnumSet;
 public class BookstoreWebApplicationInitializer implements WebApplicationInitializer {
 
     private static final String DISPATCHER_SERVLET_NAME = "dispatcher";
+    private static final String CONFIG_LOCATION = "classpath:/META-INF/spring/application-context.xml";
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
@@ -58,7 +63,7 @@ public class BookstoreWebApplicationInitializer implements WebApplicationInitial
 
     private void registerListener(ServletContext servletContext) {
         XmlWebApplicationContext rootContext = new XmlWebApplicationContext();
-        rootContext.setConfigLocation("classpath:/META-INF/spring/application-context.xml");
+        rootContext.setConfigLocation(CONFIG_LOCATION);
         servletContext.addListener(new ContextLoaderListener(rootContext));
     }
 
